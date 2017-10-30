@@ -12,16 +12,22 @@ var canvas = document.getElementById("canvas");
 var ctx=canvas.getContext('2d');
 var W=window.innerWidth;
 var H=window.innerHeight;
+var mp = 200; //max particles
+var particles = [];
+var angle = 0;
+var tiltAngle = 0;
+var animationHandler;
 
 $submit.on("click", function(){
   var $area = $areaMonth.val() + "/" + $areaDay.val();
      go();
   if($area==$date){
-	  callConfetti();
      $result.text("HAPPY BIRTHDAY!").addClass("mb-5").css("color","yellow");
   }else{ $result.text("HAPPY UNBIRTHDAY!").addClass("mb-5").css("color","white");}
 })
 
+
+//init window
 function theWindow(){
    window.requestAnimationFrame = (function () {
         return window.requestAnimationFrame || 
@@ -35,6 +41,7 @@ function theWindow(){
     })();
 }
 
+//response to submit button
 function go () {
   canvas.width = W;
   canvas.height = H;
@@ -45,40 +52,53 @@ function go () {
             canvas.height = H;
         });
   theWindow()
-  callConfetti()
+  InitializeConfetti()
 }
 
-function callConfetti(){
-    var mp = 150; //max particles
-    var particles = [];
-    var angle = 0;
-    var tiltAngle = 0;
-    var confettiActive = true;
-    var animationComplete = true;
-    var animationHandler;
-
-    // objects
-
-    var particleColors = {
+//constructor?
+var particleColors = {
         colorOptions: ["DodgerBlue", "aliceblue", "OliveDrab", "orange", "Gold", "purple", "SlateBlue", "yellow","lightblue", "Violet", "PaleGreen", "green", "blue", "SteelBlue", "teal","red","SandyBrown", "white", "Chocolate", "Crimson"],
         colorIndex: 0,
         getColor: function () {
-           if (this.colorIndex > this.colorOptions.length) {
+           if (this.colorIndex > this.colorOptions.length-1) {
                     this.colorIndex = 0;
                 }
             this.colorIndex++;
             return this.colorOptions[this.colorIndex];
         }
     }
-	
 
-    function confettiParticle(color) {
+//gather particle colors
+function InitializeConfetti() {
+        particles = [];
+        for (var i = 0; i < mp; i++) {
+            var particleColor = particleColors.getColor();
+            particles.push(new confettiParticle(particleColor));
+        }
+        StartConfetti();
+    };
+	
+//start the decent	
+    function StartConfetti() {
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = W;
+        canvas.height = H;
+        (function animloop() {
+            animationHandler = requestAnimationFrame(animloop);
+            return Draw();
+        })();
+    }
+ 
+	
+//gather particle data	
+function confettiParticle(color) {
         this.x = Math.random() * W; // x-coordinate
         this.y = (Math.random() * H) - H; //y-coordinate
-        this.r = RandomFromTo(10, 30); //radius;
-        this.d = (Math.random() * mp) + 10; //density;
+        this.r = randomFromTo(10, 30); //radius;
+        this.d = (Math.random() * mp) + 20; //density;
         this.color = color;
-        this.tilt = Math.floor(Math.random() * 10) - 10;
+        this.tilt = Math.floor(Math.random() * 10);
         this.tiltAngleIncremental = (Math.random() * 0.07) + .05;
         this.tiltAngle = 0;
 
@@ -92,16 +112,7 @@ function callConfetti(){
         }
     }
   
-    (function InitializeConfetti() {
-        particles = [];
-        animationComplete = false;
-        for (var i = 0; i < mp; i++) {
-            var particleColor = particleColors.getColor();
-            particles.push(new confettiParticle(particleColor));
-        }
-        StartConfetti();
-    })();
-  
+  //put particles on canvas
     function Draw() {
         ctx.clearRect(0, 0, W, H);
         var results = [];
@@ -115,11 +126,12 @@ function callConfetti(){
         return results;
     }
 
-    function RandomFromTo(from, to) {
-        return Math.floor(Math.random() * (to - from + 1) + from);
+	//move start position randomly
+    function randomFromTo(from, to) {
+        return Math.floor(Math.random() * (to - from + 2) + from);
     }
 
-
+//update particle array after start
     function Update() {
         var remainingFlakes = 0;
         var particle;
@@ -128,13 +140,6 @@ function callConfetti(){
 
         for (var i = 0; i < mp; i++) {
             particle = particles[i];
-            if (animationComplete) return;
-
-            if (!confettiActive && particle.y < -15) {
-                particle.y = H + 100;
-                continue;
-            }
-
             stepParticle(particle, i);
 
             if (particle.y <= H) {
@@ -145,8 +150,10 @@ function callConfetti(){
 
     }
 
+	
+	//move particle x axis as it falls
     function CheckForReposition(particle, index) {
-        if ((particle.x > W + 20 || particle.x < -20 || particle.y > H) && confettiActive) {
+        if (particle.x > W + 20 || particle.x < -20 || particle.y > H) {
             if (index % 5 > 0 || index % 2 == 0) //66.67% of the flakes
             {
                 repositionParticle(particle, Math.random() * W, -10, Math.floor(Math.random() * 10) - 20);
@@ -161,29 +168,19 @@ function callConfetti(){
             }
         }
     }
+	
+	//make particle float and twirl as it falls
     function stepParticle(particle, particleIndex) {
         particle.tiltAngle += particle.tiltAngleIncremental;
-        particle.y += (Math.cos(angle + particle.d) + 3 + particle.r / 2) / 2;
+        particle.y += (Math.cos(angle + particle.d) + 3 + particle.r / 2) / 2.5;
         particle.x += Math.sin(angle);
         particle.tilt = (Math.sin(particle.tiltAngle - (particleIndex / 3))) * 15;
     }
 
+	
+	//tilt action
     function repositionParticle(particle, xCoordinate, yCoordinate, tilt) {
         particle.x = xCoordinate;
         particle.y = yCoordinate;
         particle.tilt = tilt;
     }
-
-    function StartConfetti() {
-        W = window.innerWidth;
-        H = window.innerHeight;
-        canvas.width = W;
-        canvas.height = H;
-        (function animloop() {
-            if (animationComplete) return null;
-            animationHandler = requestAnimationFrame(animloop);
-            return Draw();
-        })();
-    }
- 
-};
