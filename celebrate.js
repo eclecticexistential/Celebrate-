@@ -12,7 +12,7 @@ var canvas = document.getElementById("canvas");
 var ctx=canvas.getContext('2d');
 var W=window.innerWidth;
 var H=window.innerHeight;
-var mp = 200; //max particles
+var mp = 250; //max particles
 var particles = [];
 var angle = 0;
 var tiltAngle = 0;
@@ -20,6 +20,7 @@ var animationHandler;
 
 $submit.on("click", function(){
   var $area = $areaMonth.val() + "/" + $areaDay.val();
+   if($area=="/"||$areaMonth.val()==''||$areaDay.val()==''){return alert("Please enter your birth date info.")}
      go();
   if($area==$date){
      $result.text("HAPPY BIRTHDAY!").addClass("mb-5").css("color","yellow");
