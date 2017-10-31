@@ -31,13 +31,11 @@ var particleColors = {
         }
     }
 
-	
 $submit.on("click", function(){
   var $area = $areaMonth.val() + "/" + $areaDay.val();
   $result.text('');
   $special.text('');
    if($area=="/"||$areaMonth.val()==''||$areaDay.val()==''){return alert("Please enter your birth date info.")};
-		go();
 	 idDate($area,$date);
 })
 
@@ -45,7 +43,13 @@ function idDate(a,b){
 	if(a==b){
     $result.text("HAPPY BIRTHDAY!").addClass("mb-5").css("color","yellow");
   }else{$result.text("HAPPY UNBIRTHDAY!").addClass("mb-5").css("color","white");}
-	if(b=="10/31"){$special.text("HAPPY HALLOWEEN!").addClass("mb-5").css("color","orange");} 
+	if(b=="10/31"){particleColors.colorOptions=['orange','black','purple','green','Violet','orange'];$special.text("HAPPY HALLOWEEN!").addClass("mb-5").css("color","orange");}
+  if(b=="12/25"){particleColors.colorOptions=['red','Crimson','green','PaleGreen','Gold','silver'];$special.text("HAPPY HOLIDAYS!").addClass("mb-5").css("color","dodgerblue");}
+  if(b=="01/01"){particleColors.colorOptions=['red','Gold','white','silver','dodgerblue'];$special.text("HAPPY NEW YEAR!").addClass("mb-5").css("color","Gold");}
+  if(b=="02/14"){particleColors.colorOptions=['red','pink','Crimson','white'];$special.text("HAPPY VALENTINES DAY!").addClass("mb-5").css("color","brickred");}
+  if(b=="03/17"){particleColors.colorOptions=['green','PaleGreen','Gold','yellow'];$special.text("HAPPY SAINT PATRICK'S DAY!").addClass("mb-5").css("color","Lime");}
+  if(b=="07/04"){particleColors.colorOptions=['red','white','blue','red','white','blue'];$special.text("HAPPY 4TH OF JULY!").addClass("mb-5").css("color","Gold");}
+  go();
 }
 //init window
 function theWindow(){
