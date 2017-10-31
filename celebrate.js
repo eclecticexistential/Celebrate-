@@ -30,18 +30,6 @@ var particleColors = {
             return this.colorOptions[this.colorIndex];
         }
     }
-	
-	var specialColors = {
-        colorOptions: ["prange","black"],
-        colorIndex: 0,
-        getColor: function () {
-           if (this.colorIndex > this.colorOptions.length-1) {
-                    this.colorIndex = 0;
-                }
-            this.colorIndex++;
-            return this.colorOptions[this.colorIndex];
-        }
-    }
 
 	
 $submit.on("click", function(){
@@ -50,15 +38,14 @@ $submit.on("click", function(){
   $special.text('');
    if($area=="/"||$areaMonth.val()==''||$areaDay.val()==''){return alert("Please enter your birth date info.")};
 		go();
-	 idDate($area);
+	 idDate($area,$date);
 })
 
-function idDate($area){
-	if($area==$date){
+function idDate(a,b){
+	if(a==b){
     $result.text("HAPPY BIRTHDAY!").addClass("mb-5").css("color","yellow");
-  }
-	if($date=="10/31"){$special.text("HAPPY HALLOWEEN!").addClass("mb-5").css("color","orange");} 
-	else{$result.text("HAPPY UNBIRTHDAY!").addClass("mb-5").css("color","white");}
+  }else{$result.text("HAPPY UNBIRTHDAY!").addClass("mb-5").css("color","white");}
+	if(b=="10/31"){$special.text("HAPPY HALLOWEEN!").addClass("mb-5").css("color","orange");} 
 }
 //init window
 function theWindow(){
