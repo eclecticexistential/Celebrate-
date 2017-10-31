@@ -8,6 +8,7 @@ var $result=$('#result');
 var $submit=$('#submit');
 var $areaMonth=$('#birthMonth');
 var $areaDay=$('#birthDay');
+var $special=$('#special');
 var canvas = document.getElementById("canvas");
 var ctx=canvas.getContext('2d');
 var W=window.innerWidth;
@@ -17,17 +18,48 @@ var particles = [];
 var angle = 0;
 var tiltAngle = 0;
 var animationHandler;
+//constructor?
+var particleColors = {
+        colorOptions: ["DodgerBlue", "aliceblue", "OliveDrab", "orange", "Gold", "purple", "SlateBlue", "yellow","lightblue", "Violet", "PaleGreen", "green", "blue", "SteelBlue", "teal","red","SandyBrown", "white", "Chocolate", "Crimson"],
+        colorIndex: 0,
+        getColor: function () {
+           if (this.colorIndex > this.colorOptions.length-1) {
+                    this.colorIndex = 0;
+                }
+            this.colorIndex++;
+            return this.colorOptions[this.colorIndex];
+        }
+    }
+	
+	var specialColors = {
+        colorOptions: ["prange","black"],
+        colorIndex: 0,
+        getColor: function () {
+           if (this.colorIndex > this.colorOptions.length-1) {
+                    this.colorIndex = 0;
+                }
+            this.colorIndex++;
+            return this.colorOptions[this.colorIndex];
+        }
+    }
 
+	
 $submit.on("click", function(){
   var $area = $areaMonth.val() + "/" + $areaDay.val();
-   if($area=="/"||$areaMonth.val()==''||$areaDay.val()==''){return alert("Please enter your birth date info.")}
-     go();
-  if($area==$date){
-     $result.text("HAPPY BIRTHDAY!").addClass("mb-5").css("color","yellow");
-  }else{ $result.text("HAPPY UNBIRTHDAY!").addClass("mb-5").css("color","white");}
+  $result.text('');
+  $special.text('');
+   if($area=="/"||$areaMonth.val()==''||$areaDay.val()==''){return alert("Please enter your birth date info.")};
+		go();
+	 idDate($area);
 })
 
-
+function idDate($area){
+	if($area==$date){
+    $result.text("HAPPY BIRTHDAY!").addClass("mb-5").css("color","yellow");
+  }
+	if($date=="10/31"){$special.text("HAPPY HALLOWEEN!").addClass("mb-5").css("color","orange");} 
+	else{$result.text("HAPPY UNBIRTHDAY!").addClass("mb-5").css("color","white");}
+}
 //init window
 function theWindow(){
    window.requestAnimationFrame = (function () {
@@ -52,22 +84,10 @@ function go () {
             canvas.width = W;
             canvas.height = H;
         });
-  theWindow()
-  InitializeConfetti()
+  theWindow();
+  InitializeConfetti();
 }
 
-//constructor?
-var particleColors = {
-        colorOptions: ["DodgerBlue", "aliceblue", "OliveDrab", "orange", "Gold", "purple", "SlateBlue", "yellow","lightblue", "Violet", "PaleGreen", "green", "blue", "SteelBlue", "teal","red","SandyBrown", "white", "Chocolate", "Crimson"],
-        colorIndex: 0,
-        getColor: function () {
-           if (this.colorIndex > this.colorOptions.length-1) {
-                    this.colorIndex = 0;
-                }
-            this.colorIndex++;
-            return this.colorOptions[this.colorIndex];
-        }
-    }
 
 //gather particle colors
 function InitializeConfetti() {
@@ -113,6 +133,12 @@ function confettiParticle(color) {
         }
     }
   
+  
+	//move start position randomly
+    function randomFromTo(from, to) {
+        return Math.floor(Math.random() * (to - from + 2) + from);
+    }
+  
   //put particles on canvas
     function Draw() {
         ctx.clearRect(0, 0, W, H);
@@ -127,10 +153,6 @@ function confettiParticle(color) {
         return results;
     }
 
-	//move start position randomly
-    function randomFromTo(from, to) {
-        return Math.floor(Math.random() * (to - from + 2) + from);
-    }
 
 //update particle array after start
     function Update() {
